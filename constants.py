@@ -15,7 +15,7 @@ VFAT_ADDRESS = 'https://vfat.tools'
 BSC_ADDRESS = 'https://vfat.tools/bsc'
 HECO_ADDRESS = 'https://vfat.tools/heco'
 
-VFAT_NAME = 'TOOLS'
+VFAT_NAME = 'ETH'
 BSC_NAME = 'BSC'
 HECO_NAME = 'HECO'
 
@@ -27,6 +27,6 @@ CONTRACT_APR_PATTERN_1 = r"Year \d+\.\d+\%"
 CONTRACT_APR_PATTERN_2 = r"Year \w+%"
 
 # Csv columns names, can be changed
-HEADERS = ['Page name', 'Various name', 'Name 1', 'Name_2', 'APR']
+HEADERS = ['Blockchain', 'Protocol', 'Token 0', 'Token 1', 'APR']
 
 
