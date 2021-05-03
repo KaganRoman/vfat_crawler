@@ -31,6 +31,35 @@ from constants import CONTRACT_APR_PATTERN_2
 from constants import HEADERS
 
 
+
+def extract_contract_values(contract):
+    pattern = re.search(CONTRACT_NAME_PATTERN_1, contract)
+
+    if pattern is not None:
+        names = re.findall(r"\w+", pattern[0])
+
+    else:
+        pattern = re.search(CONTRACT_NAME_PATTERN_2, contract)
+        if pattern is not None:
+            name = pattern[0].replace('Price:', '')
+            names = [name, ' ']
+        else:
+            return None, None
+
+    contract_apr = re.search(CONTRACT_APR_PATTERN_1, contract)
+
+    if contract_apr is None:
+        contract_apr = re.search(CONTRACT_APR_PATTERN_2, contract)
+    
+    if contract_apr is not None:
+        contract_apr_value = contract_apr[0].replace('Year ', '')
+        contract_apr_value = contract_apr_value.replace('%', '')
+    else:
+        return None, None
+    return names, contract_apr_value
+    
+
+
 class VfatCrauler():
     """A class to perform vfat site crauling"""
     def __init__(self, address, page_name):
@@ -103,32 +132,10 @@ class VfatCrauler():
         contracts = contracts.split('\n\n')
         
         for contract in tqdm(contracts, desc='Extracting name and apr from contracts and saving to csv'):
-            
-            pattern = re.search(CONTRACT_NAME_PATTERN_1, contract)
-
-            if pattern is not None:
-                names = re.findall(r"\w+", pattern[0])
-
-            else:
-                pattern = re.search(CONTRACT_NAME_PATTERN_2, contract)
-                if pattern is not None:
-                    name = pattern[0].replace('Price:', '')
-                    names = [name, ' ']
-                else:
-                    continue
-
-            contract_apr = re.search(CONTRACT_APR_PATTERN_1, contract)
-
-            if contract_apr is None:
-                contract_apr = re.search(CONTRACT_APR_PATTERN_2, contract)
-            
-            if contract_apr is not None:
-               contract_apr_value = contract_apr[0].replace('Year ', '')
-               contract_apr_value = contract_apr_value.replace('%', '')
-            else:
-                continue
-
-            row_to_write = [self._page_name, various_name, names[0], names[1], contract_apr_value]
+            names, apr = extract_contract_values(contract)
+            if not various_name: 
+                contract
+            row_to_write = [self._page_name, various_name, names[0], names[1], apr]
             with open(f'{self._page_name}.csv', 'a+') as file:
                writer = csv.writer(file)
                writer.writerow(row_to_write)
