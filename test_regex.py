@@ -5,7 +5,8 @@ test_string1 = """
 """
 
 def test_1():
-    names, apr = extract_contract_values(test_string1)
+    name_1, name_2, apr, staked = extract_contract_values(test_string1)
+    assert name_1 == 'Lava'
+    assert name_2 == 'USDT'
     assert apr == '279.74'
-    assert names[0] == 'Lava'
-    assert names[1] == 'USDT'
+    assert staked == '713,407.80'
