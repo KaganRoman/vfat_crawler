@@ -117,19 +117,19 @@ def extract_contract_values(contract, address=None, various_link=None):
     name_1, name_2 = find_name_by_pattern(contract)
     if name_1 is None:
         logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch name from contract')
+                      f'Did not catch name from contract = {contract}')
         return None, None, None, None
 
     contract_apr = find_apr_by_pattern(contract)
     if contract_apr is None:
         logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch apr from contract')
+                      f'Did not catch apr from contract = {contract}')
         return None, None, None, None
 
     contract_staked = find_staked_by_pattern(contract)
     if contract_staked is None:
         logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch staked from contract')
+                      f'Did not catch staked from contract = {contract}')
         return None, None, None, None
 
     return name_1, name_2, contract_apr, contract_staked
