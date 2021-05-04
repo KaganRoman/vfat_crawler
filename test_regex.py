@@ -1,6 +1,6 @@
 import pytest
 
-from vfat_crauler import extract_contract_values
+from parsers import extract_contract_values
 from inputs_test import TEST_INPUTS
 
 
