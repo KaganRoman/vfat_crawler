@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING, TIMEOUT_FOR_VERBOSE_PAGE_LOADING \
+from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING, TIMEOUT_FOR_VERBOSE_PAGE_LOADING, \
     TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, REDUCED_TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, PASSWORD_FOR_METAMASK, \
     HEADERS, BORDER_PHRASE, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES
 
@@ -48,6 +48,7 @@ class VfatCrauler:
 
         self._not_pulled_various_links = []
         self._partially_pulled_various_links = []
+        self._not_parsed_links = []
 
     def _make_csv_file_ready(self):
         with open(self._file_name, 'w') as file:
@@ -111,6 +112,7 @@ class VfatCrauler:
 
         contracts = contracts.split('\n\n')
 
+        added = False
         for contract in contracts:
             name_1, name_2, contract_apr, contract_staked = extract_contract_values(contract,
                                                                                     self._address,
@@ -122,6 +124,11 @@ class VfatCrauler:
             with open(self._file_name, APPEND_MODE) as file:
                 writer = csv.writer(file)
                 writer.writerow(row_to_write)
+                added = True
+        if not added:
+            self._not_parsed_links.append(various_link)
+
+
 
     def _parse_various_links(self, various_pages):
         return [v.get_attribute('href') for v in various_pages]
@@ -203,6 +210,11 @@ class VfatCrauler:
 
             print(f'Address = {self._address}. '
                   f'List of partially pulled various links: {self._partially_pulled_various_links}')
+
+            print(f'Address = {self._address}. '
+                  f'List of empty links: {self._not_parsed_links}')
+            
+            
             self._browser.quit()
 
         except KeyboardInterrupt:
