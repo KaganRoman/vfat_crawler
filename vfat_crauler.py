@@ -136,10 +136,12 @@ def extract_contract_values(contract, address=None, various_link=None):
 
 
 class VfatCrauler:
-    """A class to perform vfat site crauling"""
+    """A class to perform vfat site crawling"""
 
-    def __init__(self, address, page_name):
+    def __init__(self, address, page_name, various_links_to_run=None):
         self._page_name = page_name
+        self._various_links_to_run = various_links_to_run
+        
         options = Options()
         options.add_extension(os.path.join(ROOT_DIR, PATH_TO_METAMASK_EXTENSION_CRX_FILE))
         options.add_argument(
@@ -155,6 +157,7 @@ class VfatCrauler:
 
         self._not_pulled_various_links = []
         self._partially_pulled_various_links = []
+        
 
     def _make_csv_file_ready(self):
         with open(f'{self._page_name}.csv', 'w') as file:
@@ -227,6 +230,9 @@ class VfatCrauler:
                 writer = csv.writer(file)
                 writer.writerow(row_to_write)
 
+    def _parse_various_links(self, various_pages):
+        return [v.get_attribute('href') for v in various_pages]
+
     def _load_contracts(self):
         try:
             self._browser.switch_to.window(self._page)
@@ -258,12 +264,11 @@ class VfatCrauler:
             self._browser.quit()
             return
 
-        for various in tqdm(various_pages, desc='Iterating various links'):
-
-            various_link = various.get_attribute('href')
-            various_name = os.path.basename(os.path.normpath(various.get_attribute('href')))
-
+        various_links = self._various_links_to_run if self._various_links_to_run else self._parse_various_links(various_pages)
+        for various_link in tqdm(various_links, desc='Iterating various links'):
+            various_name = os.path.basename(os.path.normpath(various_link))
             try:
+                print(f"Opening {various_name} at {various_link}")
                 self._browser.execute_script(f"window.open('{various_link}','_blank')")
                 self._browser.switch_to.window(self._browser.window_handles[-1])
             except:
