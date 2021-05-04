@@ -24,6 +24,9 @@ BSC_NAME = 'BSC'
 HECO_NAME = 'HECO'
 
 
+BLOCKCHAIN_LIST = ['ETH', 'BSC', 'HECO']
+
+
 # Csv columns names, can be changed
 HEADERS = ['Blockchain', 'Protocol', 'Token 0', 'Token 1', 'APR', 'Staked']
 

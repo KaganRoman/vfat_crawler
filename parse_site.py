@@ -2,7 +2,7 @@ import argparse
 
 
 from vfat_crauler import VfatCrauler
-from constants import ETH_NAME, ETH_ADDRESS, BSC_NAME, BSC_ADDRESS, HECO_NAME, HECO_ADDRESS
+from constants import ETH_NAME, ETH_ADDRESS, BSC_NAME, BSC_ADDRESS, HECO_NAME, HECO_ADDRESS, BLOCKCHAIN_LIST
 
 
 ETH_RUN_LIST = []
@@ -27,7 +27,7 @@ if __name__ == '__main__':
    my_parser = argparse.ArgumentParser(description='Parse yields')
 
    # Add the arguments
-   my_parser.add_argument('-b', '--blockchain', action='store', choices=['eth', 'bsc', 'heco', 'all'], default='all')
+   my_parser.add_argument('-b', '--blockchain', action='store', choices=[*BLOCKCHAIN_LIST, 'all'], default='all')
 
    # Execute the parse_args() method
    args = my_parser.parse_args()
