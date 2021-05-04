@@ -3,7 +3,7 @@ import re
 import logging
 
 
-from constants import STAKED
+from constants import STAKED, TOTAL_STAKED, BORDER_PHRASE
 
 
 class ContractNamePattern(Enum):
@@ -103,3 +103,25 @@ def extract_contract_values(contract, address=None, various_link=None):
 
     return name_1, name_2, contract_apr, contract_staked
 
+
+def parse_contracts(contracts, address, page_name, various_name, various_link):
+    starting_index = contracts.find(BORDER_PHRASE)
+    contracts = contracts[starting_index + len(BORDER_PHRASE):]
+
+    ending_index = contracts.find('\n' + TOTAL_STAKED)
+    if ending_index != -1:
+        contracts = contracts[:ending_index]
+
+    contracts = contracts.split('\n\n')
+
+    rows = []
+    for contract in contracts:
+        name_1, name_2, contract_apr, contract_staked = extract_contract_values(contract,
+                                                                                address,
+                                                                                various_link)
+        if name_1 is None:
+            continue
+
+        row_to_write = [page_name, various_name, name_1, name_2, contract_apr, contract_staked]
+        rows.append(row_to_write)
+    return rows

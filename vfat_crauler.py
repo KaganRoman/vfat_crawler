@@ -15,9 +15,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING, TIMEOUT_FOR_VERBOSE_PAGE_LOADING, \
     TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, REDUCED_TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, PASSWORD_FOR_METAMASK, \
-    HEADERS, BORDER_PHRASE, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES
+    HEADERS, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES
 
-from parsers import extract_contract_values
+from parsers import extract_contract_values, parse_contracts
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 if ROOT_DIR not in sys.path:
@@ -100,35 +100,6 @@ class VfatCrauler:
             self._partially_pulled_various_links.append(various_link)
             return self._browser.find_element_by_id('log')
 
-    def _parse_contracts(self, contracts, various_name, various_link):
-        starting_index = contracts.find(BORDER_PHRASE)
-        contracts = contracts[starting_index + len(BORDER_PHRASE):]
-
-        ending_index = contracts.find('\n' + TOTAL_STAKED)
-        if ending_index != -1:
-            contracts = contracts[:ending_index]
-
-        contracts = contracts[starting_index + len(BORDER_PHRASE):]
-
-        contracts = contracts.split('\n\n')
-
-        added = False
-        for contract in contracts:
-            name_1, name_2, contract_apr, contract_staked = extract_contract_values(contract,
-                                                                                    self._address,
-                                                                                    various_link)
-            if name_1 is None:
-                continue
-
-            row_to_write = [self._page_name, various_name, name_1, name_2, contract_apr, contract_staked]
-            with open(self._file_name, APPEND_MODE) as file:
-                writer = csv.writer(file)
-                writer.writerow(row_to_write)
-                added = True
-        if not added:
-            self._not_parsed_links.append(various_link)
-
-
 
     def _parse_various_links(self, various_pages):
         return [v.get_attribute('href') for v in various_pages]
@@ -189,10 +160,22 @@ class VfatCrauler:
                 self._not_pulled_various_links.append(various_link)
                 continue
 
-            self._parse_contracts(contracts, various_name, various_link)
-
+            rows = parse_contracts(contracts, self._address, self._page_name, various_name, various_link)
+            if rows:
+                self._save_rows(rows)
+            else:
+                self._not_parsed_links.append(various_link)
+                
             self._browser.close()
             self._browser.switch_to.window(self._page)
+
+
+    def _save_rows(self, rows):
+        with open(self._file_name, APPEND_MODE) as file:
+            writer = csv.writer(file)
+            for row in rows:
+                writer.writerow(row)
+        
 
     def run(self):
         try:
