@@ -8,7 +8,7 @@ from constants import STAKED, TOTAL_STAKED, BORDER_PHRASE
 
 class ContractNamePattern(Enum):
     VARIANT_1 = r"\[(.*?)\]-\[(.*?)\]"
-    VARIANT_2 = r"\w+ Price:"
+    VARIANT_2 = r"(.*?) Price:"
 
 
 class AprValuePattern(Enum):
@@ -108,7 +108,7 @@ def parse_contracts(contracts, address, page_name, various_name, various_link):
     starting_index = contracts.find(BORDER_PHRASE)
     contracts = contracts[starting_index + len(BORDER_PHRASE):]
 
-    ending_index = contracts.find('\n' + TOTAL_STAKED)
+    ending_index = contracts.rfind('\n' + TOTAL_STAKED)
     if ending_index != -1:
         contracts = contracts[:ending_index]
 

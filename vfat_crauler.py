@@ -15,7 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING, TIMEOUT_FOR_VERBOSE_PAGE_LOADING, \
     TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, REDUCED_TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, PASSWORD_FOR_METAMASK, \
-    HEADERS, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES
+    HEADERS, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES, POST_LOADING_SLEEP
 
 from parsers import extract_contract_values, parse_contracts
 
@@ -86,6 +86,7 @@ class VfatCrauler:
                 WebDriverWait(self._browser, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING).until(
                     EC.text_to_be_present_in_element((By.ID, 'log'), TOTAL_STAKED))
 
+                time.sleep(POST_LOADING_SLEEP)
                 return self._browser.find_element_by_id('log')
 
             except:
