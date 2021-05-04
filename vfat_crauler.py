@@ -13,24 +13,16 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE, TIMEOUT_FOR_CONTRACTS_PAGE_LOADING, TIMEOUT_FOR_VERBOSE_PAGE_LOADING \
+    TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, REDUCED_TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING, PASSWORD_FOR_METAMASK, \
+    HEADERS, BORDER_PHRASE, TOTAL_STAKED, APPEND_MODE, DISCLAIMER, NUMBER_OF_REFRESH_TRIES
+
+from parsers import extract_contract_values
+
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 if ROOT_DIR not in sys.path:
     sys.path.append(ROOT_DIR)
 
-from constants import PATH_TO_METAMASK_EXTENSION_CRX_FILE
-from constants import TIMEOUT_FOR_CONTRACTS_PAGE_LOADING
-from constants import TIMEOUT_FOR_VERBOSE_PAGE_LOADING
-from constants import TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING
-from constants import REDUCED_TIMEOUT_FOR_AUTORIZATION_PAGE_LOADING
-from constants import PASSWORD_FOR_METAMASK
-from constants import HEADERS
-from constants import BORDER_PHRASE
-from constants import TOTAL_STAKED
-from constants import APPEND_MODE
-from constants import DISCLAIMER
-from constants import NUMBER_OF_REFRESH_TRIES
-
-from parsers import extract_contract_values
 
 class VfatCrauler:
     """A class to perform vfat site crawling"""
@@ -169,8 +161,9 @@ class VfatCrauler:
         various_links = self._various_links_to_run if self._various_links_to_run else self._parse_various_links(various_pages)
         for various_link in tqdm(various_links, desc='Iterating various links'):
             various_name = os.path.basename(os.path.normpath(various_link))
+
+            print(f"Opening {various_name} at {various_link}")
             try:
-                print(f"Opening {various_name} at {various_link}")
                 self._browser.execute_script(f"window.open('{various_link}','_blank')")
                 self._browser.switch_to.window(self._browser.window_handles[-1])
             except:
