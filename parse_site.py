@@ -16,14 +16,14 @@ BSC_RUN_LIST = ['https://vfat.tools/bsc/autofarm', 'https://vfat.tools/bsc/bake'
 
 
 def main():
-    #vfat_crauler = VfatCrauler(ETH_ADDRESS, ETH_NAME)
-    #vfat_crauler.run()
+    vfat_crauler = VfatCrauler(ETH_ADDRESS, ETH_NAME, ETH_RUN_LIST)
+    vfat_crauler.run()
 
     bsc_crauler = VfatCrauler(BSC_ADDRESS, BSC_NAME, BSC_RUN_LIST)
     bsc_crauler.run()
 
-    #heco_crauler = VfatCrauler(HECO_ADDRESS, HECO_NAME)
-    #heco_crauler.run()
+    heco_crauler = VfatCrauler(HECO_ADDRESS, HECO_NAME)
+    heco_crauler.run()
 
 
 if __name__ == '__main__':

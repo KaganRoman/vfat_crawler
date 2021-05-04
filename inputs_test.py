@@ -23,9 +23,9 @@ TEST_INPUTS = [
 """
 [COM+]-[USDT] Uni LP [+] [-] [<=>] Price: $0.25 TVL: $34,997.54\nCOM+ Price: $0.02\nUSDT Price: $1.00\nStaked: 137375.5496 COM-LP ($34,956.93)\nCOM Per Week: 120960.00 ($1,922.92)\nAPR: Day 0.79% Week 5.50% Year 286.04%\nYou are staking 0.00 [COM+]-[USDT] Uni LP ($0.00), 0.00% of the pool.\nStake 0.00 [COM+]-[USDT] Uni LP\nUnstake 0.00 [COM+]-[USDT] Uni LP\nClaim 0.00 COM ($0.00)\nStaking or unstaking also claims rewards.
 """,
-'COM',
+'COM+',
 'USDT',
-'286.04'
+'286.04',
 '34,956.93'
 ),
 
@@ -35,7 +35,7 @@ bofHBTC Price: $1,154.72 Market Cap: $39,646,294.18\nStaked: 34027.9932 bofHBTC 
 """,
 'bofHBTC',
 '',
-'12.13'
+'12.13',
 '39,292,804.31'
 ),
 
@@ -45,7 +45,7 @@ PIPI Price: $1.43 Market Cap: $76,998,421.05\nStaked: 17600052.1411 PIPI ($25,20
 """,
 'PIPI',
 '',
-'297.80'
-'1,443,212.27'
+'297.80',
+'25,200,067.62'
 ),
 ]

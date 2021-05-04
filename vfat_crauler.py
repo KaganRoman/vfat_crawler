@@ -34,7 +34,7 @@ from constants import STAKED
 
 
 class ContractNamePattern(Enum):
-    VARIANT_1 = r"\[([A-Za-z0-9_]+)\]-\[([A-Za-z0-9_]+)\]"
+    VARIANT_1 = r"\[(.*?)\]-\[(.*?)\]"
     VARIANT_2 = r"\w+ Price:"
 
 
@@ -49,11 +49,11 @@ class StakedValuePattern(Enum):
 
 
 def extract_names_from_brackets(names_in_brackets):
-    return re.findall(r"\w+", names_in_brackets[0])
+    return re.findall(r"\[(.*?)\]", names_in_brackets[0])
 
 
 def extract_name_from_context(contract_name_in_context):
-    return contract_name_in_context[0].replace('Price:', '')
+    return contract_name_in_context[0].replace(' Price:', '')
 
 
 def extract_apr_from_context(apr_in_context):
@@ -69,19 +69,15 @@ def extract_staked_from_context(staked_in_context):
 
 def find_name_by_pattern(contract):
     contract_name_in_brackets = re.search(ContractNamePattern.VARIANT_1.value, contract)
-
     if contract_name_in_brackets is not None:
         return extract_names_from_brackets(contract_name_in_brackets)
 
-    else:
-        contract_name_in_context = re.search(ContractNamePattern.VARIANT_2.value, contract)
+    contract_name_in_context = re.search(ContractNamePattern.VARIANT_2.value, contract)
+    if contract_name_in_context is not None:
+        contract_name = extract_name_from_context(contract_name_in_context)
+        return contract_name, ''
 
-        if contract_name_in_context is not None:
-            contract_name = extract_name_from_context(contract_name_in_context)
-            return contract_name, ' '
-
-        else:
-            return None, None
+    return None, None
 
 
 def find_apr_by_pattern(contract):
@@ -141,7 +137,7 @@ class VfatCrauler:
     def __init__(self, address, page_name, various_links_to_run=None):
         self._page_name = page_name
         self._various_links_to_run = various_links_to_run
-        
+
         options = Options()
         options.add_extension(os.path.join(ROOT_DIR, PATH_TO_METAMASK_EXTENSION_CRX_FILE))
         options.add_argument(
@@ -157,7 +153,7 @@ class VfatCrauler:
 
         self._not_pulled_various_links = []
         self._partially_pulled_various_links = []
-        
+
 
     def _make_csv_file_ready(self):
         with open(f'{self._page_name}.csv', 'w') as file:
