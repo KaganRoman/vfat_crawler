@@ -10,15 +10,15 @@ BSC_RUN_LIST = []
 HECO_RUN_LIST = []
 
 def main(blockchain):
-   if blockchain in ('eth', 'all'):
+   if blockchain in ('ETH', 'all'):
       vfat_crauler = VfatCrauler(ETH_ADDRESS, ETH_NAME, ETH_RUN_LIST)
       vfat_crauler.run()
 
-   if blockchain in ('bsc', 'all'):
+   if blockchain in ('BSC', 'all'):
       bsc_crauler = VfatCrauler(BSC_ADDRESS, BSC_NAME, BSC_RUN_LIST)
       bsc_crauler.run()
 
-   if blockchain in ('heco', 'all'):
+   if blockchain in ('HECO', 'all'):
       heco_crauler = VfatCrauler(HECO_ADDRESS, HECO_NAME, HECO_RUN_LIST)
       heco_crauler.run()
 
