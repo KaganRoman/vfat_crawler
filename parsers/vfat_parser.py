@@ -3,7 +3,16 @@ import re
 import logging
 
 
-from constants import STAKED, TOTAL_STAKED, BORDER_PHRASE
+# Phrase after which smart contracts list begins
+BORDER_PHRASE = "Finished reading smart contracts.\n"
+
+# Phrase which appears at the end of the page with smart contracts. Need to indicate that page was fully loaded
+TOTAL_STAKED = 'Total'
+
+STAKED = 'Staked'
+
+# Phrase which appears at the end of the page with various links. Need to indicate that page was fully loaded
+DISCLAIMER = 'Disclaimer'
 
 
 class ContractNamePattern(Enum):
@@ -82,29 +91,26 @@ def find_staked_by_pattern(contract):
         return extract_staked_from_context(staked_in_context)
 
 
-def extract_contract_values(contract, address=None, various_link=None):
+def extract_contract_values(contract, link=None):
     name_1, name_2 = find_name_by_pattern(contract)
     if name_1 is None:
-        logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch name from contract = {contract}')
+        logging.error(f'Did not catch name from {link}')
         return None, None, None, None
 
     contract_apr = find_apr_by_pattern(contract)
     if contract_apr is None:
-        logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch apr from contract = {contract}')
+        logging.error(f'Did not catch apr from {link}')
         return None, None, None, None
 
     contract_staked = find_staked_by_pattern(contract)
     if contract_staked is None:
-        logging.error(f'Address = {address}, various_link = {various_link}. '
-                      f'Did not catch staked from contract = {contract}')
+        logging.error(f'Did not catch staked from {link}')
         return None, None, None, None
 
     return name_1, name_2, contract_apr, contract_staked
 
 
-def parse_contracts(contracts, address, page_name, various_name, various_link):
+def parse_contracts(contracts, blockchain, protocol, link):
     starting_index = contracts.find(BORDER_PHRASE)
     contracts = contracts[starting_index + len(BORDER_PHRASE):]
 
@@ -116,12 +122,10 @@ def parse_contracts(contracts, address, page_name, various_name, various_link):
 
     rows = []
     for contract in contracts:
-        name_1, name_2, contract_apr, contract_staked = extract_contract_values(contract,
-                                                                                address,
-                                                                                various_link)
+        name_1, name_2, contract_apr, contract_staked = extract_contract_values(contract, link)
         if name_1 is None:
             continue
 
-        row_to_write = [page_name, various_name, name_1, name_2, contract_apr, contract_staked]
+        row_to_write = [blockchain, protocol, name_1, name_2, contract_apr, contract_staked]
         rows.append(row_to_write)
     return rows

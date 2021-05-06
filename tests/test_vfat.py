@@ -1,8 +1,8 @@
 import pytest
 
-from parsers import extract_contract_values, parse_contracts
-from inputs_test import TEST_INPUTS
-from inputs_pages_test import TEST_PAGES
+from parsers.vfat_parser import extract_contract_values, parse_contracts
+from tests.inputs_test import TEST_INPUTS
+from tests.inputs_pages_test import TEST_PAGES
 
 
 @pytest.mark.parametrize('ts', TEST_INPUTS)
@@ -16,5 +16,5 @@ def test_extract_contract_values(ts):
 
 @pytest.mark.parametrize('contract', TEST_PAGES)
 def test_extract_contract_pages(contract):
-    rows = parse_contracts(contract[0], None, None, None, None)
+    rows = parse_contracts(contract[0], None, None, None)
     assert len(rows) == contract[1]

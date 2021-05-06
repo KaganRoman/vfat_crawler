@@ -8,7 +8,7 @@
             "name": "Parse",
             "type": "python",
             "request": "launch",
-            "program": "parse_site.py",
+            "program": "main.py",
             "console": "integratedTerminal"
         }
     ]
