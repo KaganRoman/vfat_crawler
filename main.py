@@ -25,7 +25,7 @@ if __name__ == '__main__':
     my_parser = argparse.ArgumentParser(description='Parse yields')
 
     # Add the arguments
-    my_parser.add_argument('-b', '--blockchain', action='store', choices=[*Blockchain.list(), 'all'], default='HECO')
+    my_parser.add_argument('-b', '--blockchain', action='store', choices=[*Blockchain.list(), 'all'], default='all')
 
     # Execute the parse_args() method
     args = my_parser.parse_args()

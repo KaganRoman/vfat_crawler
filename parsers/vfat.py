@@ -1,5 +1,7 @@
 import time
 import os
+import logging
+from tqdm import tqdm
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -38,18 +40,11 @@ NUMBER_OF_REFRESH_TRIES = 3
 class Vfat:
     def __init__(self, blockchain):
         self._blockchain = blockchain
+        self._failed_links = []
 
     def extract(self, browser, include_list):
-        results = []
         links = self._get_links(browser, include_list)
-        for l in links:
-            browser.load_page(l, NUMBER_OF_REFRESH_TRIES,
-                              TIMEOUT_FOR_VERBOSE_PAGE_LOADING, PAGE_WAIT_CONDITION)
-            time.sleep(POST_LOADING_SLEEP)
-            content = browser.find_element_by_id('log').text
-            rows = self._parse_contracts(content, l)
-            results.extend(rows)
-        return results
+        return self._parse_links(browser, links)
 
     def _get_links(self, browser, include_list):
         if include_list:
@@ -60,6 +55,29 @@ class Vfat:
                                           LINKS_WAIT_CONDITION)
         links = self._parse_links_content(links_content)
         return [l for l in links if l not in EXCLUDE_LIST]
+
+    def _parse_links(self, browser, links):
+        results = []
+        for link in tqdm(links, desc="vfat links"):
+            rows = self._parse_link(browser, link)
+            if rows:
+                results.extend(rows)
+            else:
+                self._failed_links.append(l)
+        print(f'Tried to parse {len(links)} links, found {len(results)} rows, failed to parse: {self._failed_links}')
+        return results
+                
+    def _parse_link(self, browser, link):
+        try:
+            print(f'Loading {link}')
+            browser.load_page(link, NUMBER_OF_REFRESH_TRIES,
+                            TIMEOUT_FOR_VERBOSE_PAGE_LOADING, PAGE_WAIT_CONDITION)
+            time.sleep(POST_LOADING_SLEEP)
+            content = browser.find_element_by_id('log').text
+            return self._parse_contracts(content, link)
+        except Exception as exc:
+            logging.error(f'Failed to parse {link}. {exc}')
+        return None
 
     def _parse_links_content(self, content):
         return [v.get_attribute('href') for v in content]
