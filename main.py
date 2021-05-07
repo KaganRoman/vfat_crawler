@@ -9,7 +9,7 @@ from parsers.vfat import Vfat
 INCLUDE_LIST = {
     Blockchain.ETH: [],
     Blockchain.BSC: [],
-    Blockchain.HECO: ['https://vfat.tools/heco/lava/']     
+    Blockchain.HECO: []     
 }
 
 

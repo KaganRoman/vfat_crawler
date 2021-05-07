@@ -81,9 +81,6 @@ class Browser:
                 logging.error(
                     f'Address = {url}. Page is unavailable. Trying to reconnect.')
 
-        logging.error(f'Address = {self._address}. Please restart script. '
-                        f'Did not catch any various links, page is unavailable')        
-
 
     def find_element_by_id(self, id):
         return self._browser.find_element_by_id(id)
